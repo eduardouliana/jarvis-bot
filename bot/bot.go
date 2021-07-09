@@ -5,6 +5,7 @@ import (
 
 	"strings"
 
+	cmd "br.edu.sjc/jarvis/bot/commands"
 	"br.edu.sjc/jarvis/config"
 	"github.com/bwmarrin/discordgo"
 )
@@ -40,6 +41,17 @@ func Start() {
 	fmt.Println("Bot is running")
 }
 
+func SendMessage(session *discordgo.Session, chanelId string, content string) {
+	if content == "" {
+		return
+	}
+
+	session.ChannelMessageSend(
+		chanelId,
+		content,
+	)
+}
+
 func messageHandler(session *discordgo.Session, message *discordgo.MessageCreate) {
 	if !strings.HasPrefix(message.Content, config.BotPrefix) {
 		return
@@ -49,10 +61,16 @@ func messageHandler(session *discordgo.Session, message *discordgo.MessageCreate
 		return
 	}
 
-	if message.Content == "ping" {
-		_, _ = session.ChannelMessageSend(
-			message.ChannelID,
-			"pong",
-		)
+	messageWithoutPrefix := strings.TrimPrefix(message.Content, config.BotPrefix)
+
+	switch {
+	case strings.HasPrefix(messageWithoutPrefix, "ping"):
+		SendMessage(session, message.ChannelID, cmd.ExecutePong())
+
+	case strings.HasPrefix(messageWithoutPrefix, "build"):
+		SendMessage(session, message.ChannelID, cmd.ExecuteBuildTest())
+
+	default:
+		SendMessage(session, message.ChannelID, "Command not found")
 	}
 }
