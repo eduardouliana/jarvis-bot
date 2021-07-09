@@ -3,11 +3,13 @@ package bot
 import (
 	"fmt"
 
+	"strings"
+
 	"br.edu.sjc/jarvis/config"
 	"github.com/bwmarrin/discordgo"
 )
 
-var BotID string
+var JarvisID string
 var jarvis *discordgo.Session
 
 func Start() {
@@ -24,7 +26,7 @@ func Start() {
 		fmt.Printf(err.Error())
 	}
 
-	BotID = user.ID
+	JarvisID = user.ID
 
 	jarvis.AddHandler(messageHandler)
 
@@ -39,7 +41,11 @@ func Start() {
 }
 
 func messageHandler(session *discordgo.Session, message *discordgo.MessageCreate) {
-	if message.ID == BotID {
+	if !strings.HasPrefix(message.Content, config.BotPrefix) {
+		return
+	}
+
+	if message.ID == JarvisID {
 		return
 	}
 
