@@ -7,3 +7,6 @@ Criação de um bot para Discord, para estudo da linguagem Go
 ```
 go run .
 ```
+
+## Extenções externas
+https://github.com/bwmarrin/discordgo
